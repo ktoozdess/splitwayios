@@ -4,7 +4,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { FontAwesome6 } from '@expo/vector-icons';
 
 
-export default function Footer({navigation, toaddgroup}) {
+export default function Footer({navigation}) {
     const auth = Firebase_auth;
     const user = auth.currentUser;
     const feedlogo = auth.currentUser.photoURL
@@ -15,13 +15,16 @@ export default function Footer({navigation, toaddgroup}) {
       const tohome = () =>{
         navigation.navigate('Home')
       }
+      const tocreate = () =>{
+        navigation.navigate('Creategroup')
+      }
       
   return (
     <View style={styles.footer}>
           <Pressable onPress={tohome}>
             <MaterialIcons name="home" size={42} color="#dfdde3" />
           </Pressable>
-          <Pressable onPress={toaddgroup}>
+          <Pressable onPress={tocreate}>
             <FontAwesome6 name="add" size={42} color="#dfdde3" />
           </Pressable>
           {

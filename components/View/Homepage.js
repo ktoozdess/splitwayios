@@ -7,6 +7,8 @@ import { Firebase_auth, Firebase_db } from '../../firebase/config';
 import Footer from '../Footer';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
+import VotePage from './VotePage';
+import Animated, {FadeInUp} from 'react-native-reanimated';
 
 
 export default function Homepage({navigation}) {
@@ -65,37 +67,40 @@ export default function Homepage({navigation}) {
   
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content"/>
-      <Text onPress={() => navigation.navigate('GroupPaymentsScreen')}>nnn</Text>
-        <View style={styles.ListGroups}>
-        
-      {loading ? (
-  <ActivityIndicator size="large" color="#ffffff" />
-) : data.length !== 0 ? (
-  <FlatList
-    data={data}
-    keyExtractor={item => item.docId}
-    renderItem={({ item }) => (
-      <Pressable style={styles.GroupItem} onPress={() => navigation.navigate('GroupItem', { id: item.docId })}>
-        <Text>{item.name}</Text>
-        <View>
-          {Object.values(item.members).map((member, index) => (
-            <View style={{ flexDirection: 'row' }} key={index}>
-              <MaterialIcons name="fiber-manual-record" size={20} color="black" /><Text>{member.email}</Text>
-            </View>
-          ))}
-        </View>
-      </Pressable>
-    )}
-  />
-) : (
-  <Text style={{ color: '#FFF' }}>You are not a member of any group, create a group</Text>
-)}
+    <Text style={styles.title}>SplitWay</Text>
+  <StatusBar barStyle="light-content" />
+  <View style={styles.ListGroups}>
+    {loading ? (
+      <ActivityIndicator size="large" color="#ffffff" />
+    ) : data.length !== 0 ? (
+      <FlatList
+        data={data}
+        keyExtractor={item => item.docId}
+        renderItem={({ item }) => (
+          <Animated.View entering={FadeInUp} style={styles.GroupItem} >
+            <Pressable onPress={() => navigation.navigate('GroupItem', { id: item.docId })}> 
+              <Text style={styles.groupName}>{item.name}</Text>
+              <View style={styles.membersContainer}>
+                {Object.values(item.members).map((member, index) => (
+                  <View style={styles.member} key={index}>
+                    <MaterialIcons name="fiber-manual-record" size={16} color="#f5f4f6" />
+                    <Text style={styles.memberEmail}>{member.email}</Text>
+                  </View>
+                ))}
+              </View>
+            </Pressable>
+            
+          </Animated.View>
+        )}
+      />
+    ) : (
+      <Text style={styles.noGroupText}>You are not a member of any group. Create a group.</Text>
+    )}  
+    </View>
+  <Footer navigation={navigation} toaddgroup={toaddgroup} />
 
-        </View>
+</SafeAreaView>
 
-        <Footer navigation={navigation} toaddgroup={toaddgroup}/>
-    </SafeAreaView>
       
   );
 }
@@ -103,22 +108,51 @@ export default function Homepage({navigation}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121826'
+    backgroundColor: '#121826',
   },
-  ListGroups:{
-    justifyContent: 'center',
-    alignItems: 'center'
+  ListGroups: {
+    flex: 1,
+    paddingHorizontal: 20,
+    marginTop: 20,
   },
-  GroupItem:{
-    width: 300,
-    height: 240,
-    paddingHorizontal: 18,
-    margin: 20,
-    paddingVertical: 24,
+  GroupItem: {
+    backgroundColor: '#282828',
+    borderRadius: 10,
+    padding: 15,
+    marginVertical: 5,
+    shadowColor: '#000',
+    shadowOpacity: 0.8,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  groupName: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#FFF',
+    marginBottom: 10,
+  },
+  membersContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  member: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#54C3EA',
-    borderRadius: 30,
+    marginRight: 10,
+    marginBottom: 5,
   },
-
+  memberEmail: {
+    marginLeft: 5,
+    color: '#AAA'
+  },
+  noGroupText: {
+    color: '#FFF',
+    textAlign: 'center',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#00FFFF',
+    paddingHorizontal: 20,
+  },
 });
